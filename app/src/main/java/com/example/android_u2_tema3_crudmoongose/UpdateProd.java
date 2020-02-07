@@ -2,12 +2,10 @@ package com.example.android_u2_tema3_crudmoongose;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,12 +17,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class CreateProd extends AppCompatActivity {
+public class UpdateProd extends AppCompatActivity {
   Retrofit retrofit; servicesRetrofit miserviceretrofit;
+  EditText edtnombre; EditText edtprecio;
+  Productos miproducto;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_create_prod);
+    setContentView(R.layout.activity_update_prod);
     final String url = "http://productoupt.eu-4.evennode.com/";
     Gson gson = new GsonBuilder().setLenient().create();
     retrofit = new Retrofit.Builder()
@@ -33,27 +33,42 @@ public class CreateProd extends AppCompatActivity {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build();
     miserviceretrofit = retrofit.create(servicesRetrofit.class);
-  }
-  public void nuevoproducto(View view) {
-    EditText edtnombre; EditText edtprecio;
     edtnombre=findViewById(R.id.edtnomprod); edtprecio=findViewById(R.id.edtprecio);
+  }
+  public void updateproducto(View view) {
     final Productos producto= new Productos(edtnombre.getText().toString(),
         Integer.parseInt(edtprecio.getText().toString()));
-    Call<String> call = miserviceretrofit.newproducto(producto);
+    Call<String> call = miserviceretrofit.updateproducto(miproducto.getId(),producto);
     call.enqueue(new Callback<String>() {
       @Override
       public void onResponse(Call<String> call, Response<String> response) {
-        Log.e("newproducto: ","check:"+response.body());
-        Context context = getApplicationContext();
-        CharSequence text = "Registro existoso!!!";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        Log.e("updateproducto: ","check:"+response.body());
       }
       @Override
       public void onFailure(Call<String> call, Throwable t) {
-        Log.e("newproducto",t.toString());
+        Log.e("updateproducto",t.toString());
+      }
+    });
+  }
+  public void buscar(View view) {
+    Call<Productos> call = miserviceretrofit.getproducto(edtnombre.getText().toString());
+    call.enqueue(new Callback<Productos>() {
+      @Override
+      public void onResponse(Call<Productos> call, Response<Productos> response) {
+        Log.e("cargarproducto: ","check:"+response.body().getName()+", "+
+            response.body().getPrice()+", "+response.body().getId());
+        miproducto=new Productos(response.body().getName(),response.body().getPrice(),response.body().getId());
+        runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                          edtprecio.setText(String.valueOf(miproducto.getPrice()));
+                        }
+                      }
+        );
+      }
+      @Override
+      public void onFailure(Call<Productos> call, Throwable t) {
+        Log.e("cargarproducto",t.toString());
       }
     });
   }
