@@ -44,6 +44,7 @@ public class CreateProd extends AppCompatActivity {
       @Override
       public void onResponse(Call<String> call, Response<String> response) {
         Log.e("newproducto: ","check:"+response.body());
+        //mensaje personalizado
         Context context = getApplicationContext();
         CharSequence text = "Registro existoso!!!";
         int duration = Toast.LENGTH_SHORT;

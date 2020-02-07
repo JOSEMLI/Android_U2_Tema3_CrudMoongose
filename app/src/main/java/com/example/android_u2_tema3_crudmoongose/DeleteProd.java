@@ -2,11 +2,13 @@ package com.example.android_u2_tema3_crudmoongose;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,8 +44,13 @@ public class DeleteProd extends AppCompatActivity {
       @Override
       public void onResponse(Call<String> call, Response<String> response) {
         Log.e("deleteproducto: ","check:"+response.body());
+        //mensaje personalizado
+        Context context = getApplicationContext();
+        CharSequence text = "Eliminacion exitosa!!!";
+        int duration = Toast.LENGTH_SHORT;
         Button miboton=findViewById(R.id.miborrar);
         miboton.setEnabled(false);
+
       }
       @Override
       public void onFailure(Call<String> call, Throwable t) {
